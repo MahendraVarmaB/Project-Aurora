@@ -1,10 +1,10 @@
-# 🌌 Project Aurora — Self-Learning Notification Orchestrator
+# 🌌 Project Aurora - Self-Learning Notification Orchestrator
 
 <div align="center">
 
 ### 🚀 *AI-Powered Adaptive Engagement Intelligence System*
 
-**🏆 Kriti 2026 — SpeakX Challenge**  
+**🏆 Kriti 2026 - SpeakX Challenge**  
 
 [🎥 Demo Video](https://drive.google.com/file/d/1c_yMBaIjrgGrG-4bzWlv0tDpM2K6HmWy/view?usp=drivesdk)
 
