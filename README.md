@@ -1,4 +1,9 @@
-# 🌌 Project Aurora - Self-Learning Notification Orchestrator
+<div align="center">
+
+# 🌌 Project Aurora
+### Self-Learning Notification Orchestrator
+
+</div>
 
 <div align="center">
 
@@ -9,8 +14,6 @@
 [🎥 Demo Video](https://drive.google.com/file/d/1c_yMBaIjrgGrG-4bzWlv0tDpM2K6HmWy/view?usp=drivesdk)
 
 </div>
-
----
 
 # ✨ Overview
 
