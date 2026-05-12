@@ -1,82 +1,375 @@
-Project Aurora — Self-Learning Notification Orchestrator
-========================================================
-Team: Hostel 2613 | Kriti 2026 | SpeakX Challenge
-Video link : https://drive.google.com/file/d/1c_yMBaIjrgGrG-4bzWlv0tDpM2K6HmWy/view?usp=drivesdk
-ARCHITECTURE OVERVIEW
----------------------
-Aurora is a 3-task, 7-stage pipeline that builds a domain-agnostic,
-self-learning notification orchestration system. The pipeline ingests
-a company Knowledge Bank (text/markdown) and user behavioral data (CSV),
-then generates personalized notification schedules that improve over time
-through reinforcement learning.
+# 🌌 Project Aurora — Self-Learning Notification Orchestrator
 
-Task 1 — System Architecture & Intelligence Design:
-  - Knowledge Bank Engine (Gemini 2.5 Flash): Extracts north star metric,
-    feature-goal mappings, tone/hook matrix, propensity dimensions, and
-    journey/goal templates from any company KB.
-  - User Data Ingestion: 5-layer validation (schema, types, ranges,
-    imputation, dedup) on behavioral CSV per the defined schema.
-  - MECE Segmentation Engine: K-Means on KB-derived propensity space
-    (gamification, ai_tutor, leaderboard, social) with silhouette sweep
-    k=6-12. Within-lifecycle percentile normalization prevents lifecycle-
-    stratified clusters. Persona naming via 3-axis (dominant, activeness,
-    churn) key with iterative collision resolution.
-  - Goal & Journey Builder: Generates primary goals, sub-goals, and
-    day-on-day progression per segment x lifecycle from KB templates.
+<div align="center">
 
-Task 2 — Communication & Timing Intelligence:
-  - Theme Engine (Gemini): Maps top-3 Octalysis drives per segment.
-  - Template Generator (Gemini REST): 5 bilingual templates per
-    Segment x Lifecycle x Theme (Hindi + English), concurrent batched.
-  - Timing Optimizer: 4-model comparison (RF, GB, LR, SVM) on
-    preferred_hour -> time zone classification, outputs top-3 zones
-    per user and per segment.
-  - Schedule Generator (Claude Sonnet): Octalysis drive scoring,
-    activeness-based frequency (3-9/day), zone-aware channel routing
-    (push/in_app/whatsapp/sms), template-to-notification mapping.
+### 🚀 *AI-Powered Adaptive Engagement Intelligence System*
 
-Task 3 — Execution & Self-Learning:
-  - RL Classification: Grid-search optimal reward weights (CTR, engagement,
-    uninstall penalty). Bayesian engagement estimation. Quantile-based
-    GOOD/NEUTRAL/BAD classification with confidence gating.
-  - Strategy Generator: Traffic allocation (GOOD 70%, NEUTRAL 25%, BAD 5%),
-    segment safety analysis (uninstall guardrails), optimal timing analysis.
-  - Goal Updater (Gemini): 3-tier strategy — GOOD preserved, NEUTRAL gets
-    A/B variants, BAD rewritten. Causal reasoning from RL data.
-  - Iteration 1 Template Generator: Regenerates only changed templates.
-  - Iteration 1 Schedule Generator: RL-informed template scoring, guardrail
-    frequency reduction for high-uninstall segments.
-  - Delta Report: Documents every change with causal explanations.
+**🏆 Kriti 2026 — SpeakX Challenge**  
 
-MODELS USED
------------
-  - Gemini 2.5 Flash (google-genai): KB extraction, theme mapping, goal
-    optimization, template generation
-  - Claude Sonnet 4.6 (anthropic): Drive scoring for schedule generation
-  - scikit-learn: K-Means segmentation, Random Forest / Gradient Boosting /
-    Logistic Regression / SVM for timing classification
+[🎥 Demo Video](https://drive.google.com/file/d/1c_yMBaIjrgGrG-4bzWlv0tDpM2K6HmWy/view?usp=drivesdk)
 
-RUN INSTRUCTIONS
-----------------
-Prerequisites:
-  pip install pandas numpy scikit-learn scipy joblib google-genai
-  pip install google-generativeai requests anthropic
+</div>
 
-Run full pipeline:
-  python run_pipeline.py --data user_behavioral_data.csv --kb company_kb.md --experiment experiment_results.csv
+---
 
-Or run steps individually from the codebase/ directory:
-  python codebase/task1_aurora.py
-  python codebase/theme_engine.py
-  python codebase/generate_templates.py
-  python codebase/timing_optimizer.py
-  python codebase/schedule_generator.py
-  python codebase/task3_learning_engine.py
-  python codebase/generate_delta_report.py
+# ✨ Overview
 
-Input files (place in working directory):
-  - user_behavioral_data.csv (1500 users, schema per PS)
-  - company_kb.md (company knowledge bank)
-  - experiment_results.csv (provided by SpeakX for Demo 2)
+**Project Aurora** is a **domain-agnostic, self-learning notification orchestration platform** that dynamically generates, optimizes, and evolves user engagement strategies using:
 
-Windows compatible: All paths use os.path.join, no Unix-specific commands.
+- 🧠 **Large Language Models**
+- 📊 **Behavioral Analytics**
+- 🎯 **Segmentation Intelligence**
+- 🤖 **Reinforcement Learning**
+- ⏰ **Timing Optimization**
+
+Aurora ingests:
+
+- 📄 Company Knowledge Banks (`.md/.txt`)
+- 📈 User Behavioral Data (`.csv`)
+- 🧪 Experiment Results
+
+…and autonomously builds a **personalized multi-channel notification ecosystem** that continuously improves engagement performance over time.
+
+---
+
+# 🏗️ System Architecture
+
+<div align="center">
+
+```text
+                ┌────────────────────────────┐
+                │      Company KB (.md)      │
+                └────────────┬───────────────┘
+                             │
+                             ▼
+                  ┌──────────────────┐
+                  │ Knowledge Engine │
+                  └────────┬─────────┘
+                           │
+                           ▼
+                ┌─────────────────────┐
+                │ User Data Ingestion │
+                └─────────┬───────────┘
+                          │
+                          ▼
+              ┌──────────────────────────┐
+              │ MECE Segmentation Engine │
+              └──────────┬───────────────┘
+                         │
+                         ▼
+              ┌──────────────────────────┐
+              │ Goal & Journey Builder   │
+              └──────────┬───────────────┘
+                         │
+                         ▼
+            ┌──────────────────────────────┐
+            │ Theme + Template Generation  │
+            └────────────┬─────────────────┘
+                         │
+                         ▼
+               ┌────────────────────┐
+               │ Timing Optimizer   │
+               └─────────┬──────────┘
+                         │
+                         ▼
+             ┌─────────────────────────┐
+             │ Schedule Orchestrator   │
+             └──────────┬──────────────┘
+                        │
+                        ▼
+             ┌─────────────────────────┐
+             │ Reinforcement Learning  │
+             └──────────┬──────────────┘
+                        │
+                        ▼
+             ┌─────────────────────────┐
+             │ Self-Improving System   │
+             └─────────────────────────┘
+```
+
+</div>
+
+---
+
+# 🧩 Pipeline Breakdown
+
+## 🧠 Task 1 — System Architecture & Intelligence Design
+
+### 🔹 Knowledge Bank Engine *(Gemini 2.5 Flash)*
+
+Extracts:
+
+- North Star Metrics
+- Feature → Goal mappings
+- Tone & Hook matrices
+- Propensity dimensions
+- Journey templates
+- Lifecycle progression structures
+
+### 🔹 User Data Ingestion
+
+Robust **5-layer validation pipeline**:
+
+- ✅ Schema Validation
+- ✅ Type Checking
+- ✅ Range Validation
+- ✅ Missing Value Imputation
+- ✅ Deduplication
+
+### 🔹 MECE Segmentation Engine
+
+Advanced clustering pipeline using:
+
+- 📊 **K-Means Clustering**
+- 📈 **Silhouette Score Sweep (k = 6 → 12)**
+- ⚖️ Lifecycle percentile normalization
+- 🧬 KB-derived propensity dimensions:
+  - Gamification
+  - AI Tutor
+  - Leaderboards
+  - Social Interaction
+
+### 🔹 Persona Generation
+
+Dynamic 3-axis persona labeling:
+
+```text
+Dominant Trait × Activeness × Churn Risk
+```
+
+with iterative collision resolution.
+
+### 🔹 Goal & Journey Builder
+
+Generates:
+
+- 🎯 Primary goals
+- 🪜 Sub-goals
+- 📅 Day-wise progression journeys
+- 🔄 Lifecycle-aware engagement flows
+
+---
+
+# 💬 Task 2 — Communication & Timing Intelligence
+
+### 🔹 Theme Engine *(Gemini)*
+
+Maps the **Top-3 Octalysis motivational drives** for every segment.
+
+### 🔹 Template Generator *(Gemini REST API)*
+
+Generates:
+
+- 🌐 Bilingual notifications *(English + Hindi)*
+- ⚡ Concurrent batched inference
+- 🧠 Segment-aware messaging
+- 🎭 Theme-specific communication styles
+
+### 🔹 Timing Optimizer
+
+Compares multiple ML models:
+
+| Model | Purpose |
+|---|---|
+| Random Forest | Time zone prediction |
+| Gradient Boosting | Behavioral timing patterns |
+| Logistic Regression | Baseline classification |
+| SVM | Boundary optimization |
+
+Outputs:
+
+- ⏰ Top-3 optimal delivery windows
+- 🌍 Segment-level timezone intelligence
+- 👤 User-level notification timing
+
+### 🔹 Schedule Generator *(Claude Sonnet)*
+
+Builds intelligent schedules using:
+
+- 🎯 Octalysis drive scoring
+- 📈 Activeness-based notification frequency
+- 📡 Multi-channel routing:
+  - Push
+  - In-App
+  - WhatsApp
+  - SMS
+- 🧠 Template-to-notification optimization
+
+---
+
+# 🔁 Task 3 — Execution & Self-Learning
+
+### 🔹 RL Classification Engine
+
+Performs:
+
+- 🧪 Reward-weight grid search
+- 📊 Bayesian engagement estimation
+- ⚖️ Quantile-based performance classification
+
+Outputs:
+
+```text
+GOOD / NEUTRAL / BAD
+```
+
+with confidence gating.
+
+### 🔹 Strategy Generator
+
+Implements adaptive traffic allocation:
+
+| Strategy Class | Allocation |
+|---|---|
+| GOOD | 70% |
+| NEUTRAL | 25% |
+| BAD | 5% |
+
+Additional capabilities:
+
+- 🚨 Uninstall guardrails
+- 📉 Risk mitigation
+- ⏰ Timing effectiveness analysis
+
+### 🔹 Goal Updater *(Gemini)*
+
+Adaptive 3-tier optimization strategy:
+
+| Performance | Action |
+|---|---|
+| GOOD | Preserve |
+| NEUTRAL | Generate A/B Variants |
+| BAD | Rewrite Completely |
+
+### 🔹 Iterative Regeneration
+
+Aurora intelligently regenerates only:
+
+- Changed templates
+- Updated schedules
+- RL-affected components
+
+to minimize compute overhead.
+
+### 🔹 Delta Report Generator
+
+Creates detailed causal reports explaining:
+
+- What changed
+- Why it changed
+- RL signals responsible
+- Expected impact
+
+---
+
+# 🤖 Models & Technologies Used
+
+## 🧠 LLMs
+
+| Model | Usage |
+|---|---|
+| Gemini 2.5 Flash | KB extraction, optimization, template generation |
+| Claude Sonnet 4.6 | Schedule generation & drive scoring |
+
+## 📊 Machine Learning
+
+| Library | Purpose |
+|---|---|
+| scikit-learn | Clustering & classification |
+| pandas | Data processing |
+| numpy | Numerical computation |
+| scipy | Statistical utilities |
+| joblib | Model persistence |
+
+---
+
+# ⚙️ Installation
+
+## 📦 Prerequisites
+
+```bash
+pip install pandas numpy scikit-learn scipy joblib
+pip install google-genai google-generativeai
+pip install anthropic requests
+```
+
+---
+
+# ▶️ Running the Pipeline
+
+## 🚀 Run Complete Pipeline
+
+```bash
+python run_pipeline.py \
+  --data user_behavioral_data.csv \
+  --kb company_kb.md \
+  --experiment experiment_results.csv
+```
+
+---
+
+# 🧪 Run Individual Components
+
+```bash
+python codebase/task1_aurora.py
+python codebase/theme_engine.py
+python codebase/generate_templates.py
+python codebase/timing_optimizer.py
+python codebase/schedule_generator.py
+python codebase/task3_learning_engine.py
+python codebase/generate_delta_report.py
+```
+
+---
+
+# 📂 Required Input Files
+
+| File | Description |
+|---|---|
+| `user_behavioral_data.csv` | Behavioral dataset (1500 users) |
+| `company_kb.md` | Company Knowledge Bank |
+| `experiment_results.csv` | SpeakX Demo-2 experiment results |
+
+---
+
+# 🌟 Key Highlights
+
+- 🧠 Fully AI-driven orchestration
+- 🔁 Reinforcement learning feedback loop
+- 🌍 Domain-agnostic architecture
+- 📈 Self-improving engagement engine
+- ⚡ Multi-model ML optimization
+- 🌐 Multilingual notification generation
+- 📡 Multi-channel intelligent delivery
+- 🛡️ Safety-aware traffic allocation
+- 📊 Explainable adaptive strategies
+
+---
+
+# 💻 Platform Compatibility
+
+✅ Windows Compatible  
+✅ Linux Compatible  
+✅ Cross-platform path handling using `os.path.join()`  
+✅ No Unix-specific dependencies
+
+---
+
+# 📌 Future Improvements
+
+- 📱 Real-time notification streaming
+- 🧠 Online reinforcement learning
+- 🔔 Dynamic push prioritization
+- 🎙️ Voice notification synthesis
+- 🌎 Regional language expansion
+- 📊 Live analytics dashboard
+- ⚡ Kafka / Redis integration
+
+---
+
+<div align="center">
+
+## 🌌 Aurora  
+### *Notifications that learn, adapt, and evolve.*
+
+</div>
