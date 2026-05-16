@@ -39,59 +39,23 @@ Aurora ingests:
 
 <div align="center">
 
-```text
-                ┌────────────────────────────┐
-                │      Company KB (.md)      │
-                └────────────┬───────────────┘
-                             │
-                             ▼
-                  ┌──────────────────┐
-                  │ Knowledge Engine │
-                  └────────┬─────────┘
-                           │
-                           ▼
-                ┌─────────────────────┐
-                │ User Data Ingestion │
-                └─────────┬───────────┘
-                          │
-                          ▼
-              ┌──────────────────────────┐
-              │ MECE Segmentation Engine │
-              └──────────┬───────────────┘
-                         │
-                         ▼
-              ┌──────────────────────────┐
-              │ Goal & Journey Builder   │
-              └──────────┬───────────────┘
-                         │
-                         ▼
-            ┌──────────────────────────────┐
-            │ Theme + Template Generation  │
-            └────────────┬─────────────────┘
-                         │
-                         ▼
-               ┌────────────────────┐
-               │ Timing Optimizer   │
-               └─────────┬──────────┘
-                         │
-                         ▼
-             ┌─────────────────────────┐
-             │ Schedule Orchestrator   │
-             └──────────┬──────────────┘
-                        │
-                        ▼
-             ┌─────────────────────────┐
-             │ Reinforcement Learning  │
-             └──────────┬──────────────┘
-                        │
-                        ▼
-             ┌─────────────────────────┐
-             │ Self-Improving System   │
-             └─────────────────────────┘
+```mermaid
+flowchart TD
+    A["Company KB (.md)"] --> B["Knowledge Engine"]
+    B --> C["User Data Ingestion"]
+    C --> D["MECE Segmentation Engine"]
+    D --> E["Goal & Journey Builder"]
+    E --> F["Theme + Template Generation"]
+    F --> G["Timing Optimizer"]
+    G --> H["Schedule Orchestrator"]
+    H --> I["Reinforcement Learning"]
+    I --> J["Self-Improving System"]
+
+    classDef box fill:#0f172a,stroke:#38bdf8,color:#ffffff,stroke-width:2px;
+    class A,B,C,D,E,F,G,H,I,J box;
 ```
 
 </div>
-
 ---
 
 # 🧩 Pipeline Breakdown
