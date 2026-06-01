@@ -43,6 +43,7 @@ def _safe_float(val, default=0.0):
         return default
 
 
+# Compare iteration outputs and produce human readable delta explanations summary.
 def detect_template_changes(iter0, iter1, experiment):
     deltas = []
     exp_by_tid = {r.get("template_id", "")

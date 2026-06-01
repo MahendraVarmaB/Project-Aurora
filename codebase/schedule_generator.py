@@ -171,7 +171,6 @@ def activeness_multiplier(state):
 
 
 whatsapp_sent = {}
-sms_sent = {}
 
 zone_channel_map = {
     1:"push",
@@ -255,6 +254,7 @@ SUBGOAL:
     })
 
 
+# Ask LLM to score drives for each segment and lifecycle.
 prompt = """
 Score Octalysis drive effectiveness for each task.
 
@@ -304,6 +304,7 @@ scores = _repair_truncated_json(raw)
 for i in range(1,4):
     df[f"score_final_drive_{i}"] = 0.0
 
+# Distribute templates across top zones using drive scores and counts.
 for index,row in df.iterrows():
     key = f"{row['segment_id']}|{row['lifecycle_stage']}"
     segment_scores = scores.get(key,{})
@@ -517,10 +518,9 @@ output.to_csv("iteration_0_before_learning/user_notification_schedule.csv",index
 
 def schedule_generator_iteration_1(rl_strategy, goals_df):
 
-    global whatsapp_sent, sms_sent
+    global whatsapp_sent
 
     whatsapp_sent = {}
-    sms_sent = {}
 
     segments = pd.read_csv("iteration_1_after_learning/user_segments.csv")
     goal = goals_df.copy()

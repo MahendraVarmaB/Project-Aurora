@@ -27,7 +27,7 @@ def run_theme_engine():
     segment_goals = pd.read_csv(SEGMENT_GOALS_CSV)
     print(f"[Theme Engine] Loaded segment_goals: {segment_goals.shape}")
 
-    # Prepare segment profiles
+    # Build per-segment profiles to send into Gemini for reasoning analysis.
     segment_profiles = []
     for segment_id, group in segment_goals.groupby('segment_id'):
         profile = {
@@ -37,6 +37,7 @@ def run_theme_engine():
         }
         segment_profiles.append(profile)
 
+    # Prompt Gemini to choose top drives using full lifecycle context.
     prompt = f"""
 You are an expert in behavioral design, EdTech retention, and the Octalysis Framework.
 I have a dataset of user segments. Each segment profile contains all temporal data (D0 to D90 focus), propensity scores, and a specific goal hierarchy.
@@ -82,6 +83,7 @@ Return a JSON array of objects with this strict structure. Return exactly ONE ob
         )
     )
 
+    # Parse JSON response and split top drives into columns cleanly.
     mapped_drives = json.loads(response.text)
     drives_df = pd.DataFrame(mapped_drives)
     print(f"[Theme Engine] Received {len(drives_df)} unique segment mappings from the API.")
@@ -94,7 +96,7 @@ Return a JSON array of objects with this strict structure. Return exactly ONE ob
     # Ensure segment_id types match
     drives_df['segment_id'] = drives_df['segment_id'].astype(str)
 
-    # Save trimmed version: segment_id, drive_1, drive_2, drive_3, reasoning
+    # Persist deduplicated segment themes for downstream template and scheduling steps.
     output_df = drives_df[['segment_id', 'drive_1', 'drive_2', 'drive_3', 'reasoning']].drop_duplicates(subset=['segment_id'])
     output_df.to_csv(OUTPUT_CSV, index=False)
     print(f"[Theme Engine] Saved communication_themes.csv → {OUTPUT_CSV} ({len(output_df)} segments)")

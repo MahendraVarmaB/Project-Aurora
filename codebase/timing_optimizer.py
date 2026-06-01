@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 import warnings
 from sklearn.pipeline import Pipeline
-from sklearn.metrics import accuracy_score, f1_score, classification_report
+from sklearn.metrics import accuracy_score, f1_score
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.svm import SVC
@@ -25,10 +25,6 @@ ITER1_DIR = "iteration_1_after_learning"
 WINDOW_TO_ZONE = {
     "early_morning": 1, "mid_morning": 2, "afternoon": 3,
     "late_afternoon": 4, "evening": 5, "night": 6,
-}
-ZONE_LABELS_MAP = {
-    1: "Zone_1 (06-08)", 2: "Zone_2 (09-11)", 3: "Zone_3 (12-14)",
-    4: "Zone_4 (15-17)", 5: "Zone_5 (18-20)", 6: "Zone_6 (21-23)",
 }
 ALL_ZONES = [1, 2, 3, 4, 5, 6]
 
@@ -70,6 +66,7 @@ def run_timing_optimizer(behavioral_path=None, segments_path=None, output_dir=No
     df = beh.merge(seg_slim, on="user_id", how="left")
     print(f"\n[OK] Merged — {df.shape}")
 
+    # Map preferred hour into coarse time zones for classification modeling.
     def map_to_zone(hour):
         if 6 <= hour <= 8: return 1
         elif 9 <= hour <= 11: return 2
@@ -109,6 +106,7 @@ def run_timing_optimizer(behavioral_path=None, segments_path=None, output_dir=No
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
 
+    # Train several classifiers and pick the one with best accuracy.
     models = {
         "Random Forest": Pipeline([("clf", RandomForestClassifier(n_estimators=300, min_samples_leaf=2, random_state=42, n_jobs=-1))]),
         "Gradient Boosting": Pipeline([("clf", GradientBoostingClassifier(n_estimators=200, max_depth=4, learning_rate=0.1, random_state=42))]),

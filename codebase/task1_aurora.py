@@ -25,7 +25,7 @@
 # **Domain-agnostic:** Swap the KB file + user CSV → all outputs change. No hardcoded SpeakX logic.
 # 
 
-import os, json, re, time, warnings
+import os, json, time, warnings
 import numpy as np
 import pandas as pd
 import joblib
@@ -34,7 +34,6 @@ load_dotenv()
 from scipy.stats import rankdata
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
-from sklearn.preprocessing import StandardScaler
 warnings.filterwarnings('ignore')
 np.random.seed(42)
 
@@ -115,11 +114,8 @@ def validate_input(df: pd.DataFrame) -> pd.DataFrame:
       5. Duplicate user_id removal + anomaly flagging
     """
 
-    imputed_log = {}
-
     # ── Layer 1: Required column presence ──────────────────────
     missing_required = [c for c in REQUIRED_COLUMNS if c not in df.columns]
-    extra_columns    = [c for c in df.columns if c not in INPUT_SCHEMA]
 
     if missing_required:
         raise ValueError(
@@ -128,8 +124,6 @@ def validate_input(df: pd.DataFrame) -> pd.DataFrame:
             f"   Dataset columns found:    {list(df.columns)}\n"
             f"   Please ensure your CSV matches the required schema."
         )
-    if extra_columns:
-        pass
 
     # ── Layer 2: Type coercion ──────────────────────────────────
     df["lifecycle_stage"] = df["lifecycle_stage"].astype(str).str.lower().str.strip()
@@ -176,40 +170,18 @@ def validate_input(df: pd.DataFrame) -> pd.DataFrame:
                 q05, q95  = df[col].quantile(0.05), df[col].quantile(0.95)
                 fill_val  = df[col].clip(q05, q95).median()
                 df[col]   = df[col].fillna(fill_val)
-                imputed_log[col] = f"{cnt} nulls ({pct:.1f}%) → median={fill_val:.2f}"
             else:
                 df[col] = df[col].fillna("unknown")
-                imputed_log[col] = f"{cnt} nulls ({pct:.1f}%) → 'unknown'"
     else:
         pass
 
     # ── Layer 5: Dedup + anomaly flag ──────────────────────────
-    n_before = len(df)
     df = df.drop_duplicates(subset=["user_id"], keep="last").copy()
-    n_dupes  = n_before - len(df)
-    if n_dupes > 0:
-        pass
-
-    # Anomaly: high coins + zero sessions — flagged for audit, never written to df
-    n_anom = 0
-    if "coins_balance" in df.columns:
-        coins_mean = df["coins_balance"].mean()
-        coins_std  = df["coins_balance"].std()
-        _anomaly_mask = (
-            (df["coins_balance"] > coins_mean + 3 * coins_std) &
-            (df["sessions_last_7d"] == 0)
-        )
-        n_anom = int(_anomaly_mask.sum())
-        if n_anom > 0:
-            pass
 
     for col, default in [("days_since_signup", 0), ("preferred_hour", 12),
                           ("age_band", "unknown"), ("region", "unknown")]:
         if col not in df.columns:
             df[col] = default
-
-    for lc, cnt in df["lifecycle_stage"].value_counts().items():
-        pass
 
     return df
 
@@ -695,7 +667,6 @@ def engineer_features(df):
         key   = dim['key']
         col_w = dim['column_weights']
         score = pd.Series(0.0, index=df.index)
-        used_cols = []
         for raw_col, weight in col_w.items():
             # Resolution order: ai_smoothed → log_ → norm_ → raw → int_
             # ai_smoothed takes priority for feature_ai_tutor_used — gradient over cliff.
@@ -717,7 +688,6 @@ def engineer_features(df):
                 )
                 _effective_weight = min(weight, 0.5) if _col_is_binary else weight
                 score += _effective_weight * df[found].clip(0, 1)
-                used_cols.append(f'{raw_col}({found})*{_effective_weight:.2f}')
             else:
                 pass
         df[f'propensity_{key}'] = score.round(4)
@@ -752,8 +722,6 @@ def engineer_features(df):
         _row_sums  = _equalized.sum(axis=1, keepdims=True)
         _row_norm  = np.round(_equalized / _row_sums, 4)
         df[_prop_cols_computed] = _row_norm
-        _col_means = _row_norm.mean(axis=0)
-        _col_stds  = _row_norm.std(axis=0)
 
 
     # ── Activeness score — equal-weight mean of key behavioral signals ──────────

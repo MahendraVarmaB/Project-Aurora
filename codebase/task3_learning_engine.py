@@ -99,6 +99,7 @@ def _evaluate_weights(data, w_ctr, w_eng, w_uni):
     return score(top) - score(bottom)
 
 
+# Learn reward weights by maximizing separation between top and bottom.
 def _learn_optimal_weights(data):
     best_score, best_weights = -np.inf, (0.4, 0.6, 2.0)
     for w_ctr in [0.1, 0.2, 0.3, 0.4, 0.5]:
@@ -168,6 +169,7 @@ rl_df["action"] = rl_df["rl_classification"].map(
 
 # ── 3. RL STRATEGY (safety + timing → rl_comprehensive) ──────────────────────
 
+# Aggregate safety signals to adjust frequency when uninstall risk rises.
 def _build_safety_df(df):
     rows = []
     for seg_id in sorted(df["segment_id"].unique()):

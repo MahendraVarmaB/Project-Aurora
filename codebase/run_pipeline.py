@@ -60,6 +60,7 @@ def run_full_pipeline(data_path=None, kb_path=None):
         return
     print("\n✅ Task 1 complete.")
 
+    # Autodetect user CSV when path not supplied for timing optimizer.
     # Detect actual data path for later steps (timing optimizer)
     if data_path is None:
         candidates = [f for f in os.listdir(PROJECT_ROOT)
@@ -97,6 +98,7 @@ def run_full_pipeline(data_path=None, kb_path=None):
         print(f"   Schedule Generator failed with code {result.returncode}")
     print("\n✅ Schedule Generator (Iter 0) complete.")
 
+    # Carry forward iteration-zero outputs to keep learning steps consistent downstream.
     # ── Copy iter0 files to iter1 before Task 3 ─────────────────────────────
     copy_iter0_to_iter1()
 

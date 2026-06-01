@@ -53,6 +53,7 @@ dbg("GEMINI_API_KEY", f"{'*' * (len(API_KEY) - 4)}{API_KEY[-4:]}")
 
 MODEL_ID = "gemini-2.5-flash"
 GEMINI_URL = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL_ID}:generateContent?key={API_KEY}"
+# Generate batched prompts to reduce API calls and speed output.
 # Rows per API call  (2 rows × 15 tpl ≈ 10K output tokens) — reduced from 1 to cut requests by 50%
 BATCH_SIZE = 2
 MAX_WORKERS = 12   # Reduce to 12 since batch size increased; fewer parallel workers needed
